@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %} 저녁메뉴추천 {% endblock %}
+{% block body %}
     <h1>저녁메뉴 추천</h1>
+    {% if pick == '고구마맛탕' %}
+        <p>오늘은 고구마~!</p>
+    {% else %}
+        <p>{{pick}} 이닷!</p>
+    {% endif %}
     <p>{{ pick }}</p>
-</body>
-</html>
+    <hr>
+    {% for menu in box %}
+        <p>{{ menu }}</p>
+    {% endfor %}
+{% endblock %}
