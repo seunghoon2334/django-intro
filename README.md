@@ -126,5 +126,31 @@
 
    ```html
    <!-- home/templates/dinner.html -->
-   <h1> {{pick}} </h1>
+   <h1> {{pick}} </h1>Variable Routing
    ```
+
+![Image from iOS](image/Image from iOS.jpg)
+
+# Variable Routing
+
+1. url 설정
+
+   ```python
+   path('home/you/<name>', views.you),
+   path('home/cube/<int:num>', views.cube)
+   ```
+
+2. view 파일 설정
+
+   ```python
+   def you(request, name):
+       return render(request, 'you.html', {'name': name})
+   ```
+
+3. 템플릿 파일 설정
+
+   ```django
+   <h1> {{ name }}, 안녕!!! </h1>
+   ```
+
+
