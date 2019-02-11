@@ -29,7 +29,7 @@
 
 2. 서버 실행하기
 
-- `settings.py` 설정
+* `settings.py` 설정
 
 ```python
      AllWED_HOST = ['*']
@@ -87,9 +87,9 @@
        return HttpResponse('hello, django!')
 ```
 
-- 주의할 점은 선언된 함수에서 `request`를 인자로 받아야 한다.
-  - request는 사용자(클라이언트)의 요청 정보와 서버에 대한 정보가 담겨 있다.
-  - Django 내부에서 해당 함수를 호출하면서 정보를 넘겨주기 때문에 반드시 명시해줘야한다.
+* 주의할 점은 선언된 함수에서 `request`를 인자로 받아야 한다.
+  * request는 사용자(클라이언트)의 요청 정보와 서버에 대한 정보가 담겨 있다.
+  * Django 내부에서 해당 함수를 호출하면서 정보를 넘겨주기 때문에 반드시 명시해줘야한다.
 
 # Template (MTV - T)
 
@@ -112,10 +112,10 @@
        return render(request, 'dinner.html', {'dinner': pick})
 ```
 
-- Template을 리턴하려면, `render`를 사용하여야 한다.
-  - request (필수)
-  - `template 파일 이름` (필수)
-  - `template 변수` (선택) : `dictionary` 타입으로 구성해야 한다.
+* Template을 리턴하려면, `render`를 사용하여야 한다.
+  * request (필수)
+  * `template 파일 이름` (필수)
+  * `template 변수` (선택) : `dictionary` 타입으로 구성해야 한다.
 
 1. Template 설정
 
@@ -129,7 +129,7 @@
    <h1> {{pick}} </h1>Variable Routing
    ```
 
-![1234](image/1234.jpg)
+![Image from iOS](image/Image from iOS.jpg)
 
 # Variable Routing
 
@@ -153,4 +153,74 @@
    <h1> {{ name }}, 안녕!!! </h1>
    ```
 
+# Form data
 
+1. `ping`
+
+   1. 요청 url 설정
+
+      ```python
+      path('home/ping', views.ping)
+      ```
+
+   2. view 설정
+
+      ```python
+      def ping(request):
+          return render(request, 'ping.html')
+      ```
+
+   3. template 설정
+
+      ```django
+      <form action='/home/pong/'>
+          <input name="message" type="text">
+          <input type="submit">
+      </form>
+      ```
+
+2. `pong`
+
+   1. 요청 url 설정
+
+      ```python
+      path('home/pong/', views.pong)
+      ```
+
+   2. view 설정
+
+      ```python
+      def pong(request):
+          message = request.GET.get('message')
+          return render(request, 'pong.html', {'message': message})
+      ```
+
+   3. template 설정
+
+      ```django
+      <h1>{{ message }}</h1>
+      ```
+
+3. POST 요청 처리
+
+   1. 요청 FORM 수정
+
+      ```django
+      <form action="/home/pong/" method="POST">
+          {% csrf_token %}
+      </form>
+      ```
+
+   2. view 수정
+
+      ```python
+      def pong(request):
+          message = request.POST.get('message')
+          return render(request, 'pong.html', {'message': message})
+      ```
+
+      * `csrf_token` 은 보안을 위해 django에서 기본적으로 설정되어 있는 것이다.
+        * CSRF 공격 : Cross Site Request Forgery
+        * form을 통해 POST 요청을 보낸다는 것은 데이터베이스에 반영되는 경우가 대부분인데, 해당 요청을 우리가 만든 정해진 form 에서 보내는지 검증하는 것.
+        * 실제로 input type hidden으로 특정한 hash값이 담겨 있는 것을 볼 수 있다.
+        * `settings.py`에 `MIDDLEWARE` 설정에 보면 csrf 관련된 내용이 설정된 것을 볼 수 있다.
