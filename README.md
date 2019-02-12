@@ -25,20 +25,26 @@
    └── manage.py
    ```
 
+   ```bash
+   $ python manage.py startapp ____
+   ```
+
+
+
    지금부터 pwd는 `~/workspace/django_intro`이다.
 
-2. 서버 실행하기
+1. 서버 실행하기
 
-* `settings.py` 설정
+   * `settings.py` 설정
 
-```python
+   ```python
      AllWED_HOST = ['*']
     # c9에서는 host - 0.0.0.0, port - 8080 만 활용할 수 있기 때문에 위와 같이 설정한다.
-```
+   ```
 
-```bash
+   ```bash
    ~/workspace/django_intro $python manage.py runserver 0.0.0.0:8080
-```
+   ```
 
 앞으로 모든 장고 명령어는 프로젝트를 만들 때를 제외하고 `python manage.py`를 활용한다. 따라서, 명령어가 안될 때에는 반드시 `pwd`와 `ls`를 통해 현재 bash(터미널) 위치를 확인하자!!
 
@@ -224,3 +230,249 @@
         * form을 통해 POST 요청을 보낸다는 것은 데이터베이스에 반영되는 경우가 대부분인데, 해당 요청을 우리가 만든 정해진 form 에서 보내는지 검증하는 것.
         * 실제로 input type hidden으로 특정한 hash값이 담겨 있는 것을 볼 수 있다.
         * `settings.py`에 `MIDDLEWARE` 설정에 보면 csrf 관련된 내용이 설정된 것을 볼 수 있다.
+
+# ststic file 관리
+
+> 정적 파일(images, css, js)을 서버 저장이 되어 있을 때, 이를 각각의 템플릿에 불러오는 방법
+
+### 디렉토리 구조
+
+디렉토리 구조는 `home/static/home/`으로 구성된다.
+
+이 디렉토리 설정은 `settings.py`의 가장 하단에 `STATIC_URL`에 맞춰서 해야한다. (기본 `/static/`)
+
+1. 파일 생성
+
+   `home/static/home/images/1.jpg`
+
+   `home/static/home/stylesheets/style.css`
+
+2. 템플릿 활용
+
+   ```django
+   {% exteds 'base.html' %}
+   {% load static %}
+   {% block css %}
+   <link rel="stylesheets" type="text/css" href="{% static 'home/stylesheets/style.css' %}">
+   {% endblock %}
+   {% block body %}
+   <img src="{% static 'home/images/1.jpg' %}">
+   {% endblock %}
+   ```
+
+# URL 설정
+
+> 위와 같이 코드를 짜는 경우에, `django_intro/urls.py`에 모든 url 정보가 담기게 된다.
+>
+> 일반적으로 Django 어플리케이션에서 url을 설정하는 방법은 app 별로 `urls.py`를 구성하는 것이다.
+
+1. `django_intro/urls.py`
+
+   ```python
+   from django.contrib import admin
+   from django.urls import path, include
+   
+   urlpatterns = [
+       path('admin/', admin.site.urls),
+       path('home/', include('home.urls'))
+   ]
+   ```
+
+   * `include`를 통해 `app/urls.py`에 설정된 url을 포함한다.
+
+2. `home/urls.py`
+
+   ```python
+   from django.urls import path
+   # views는 home/views.py
+   from . import views
+   urlpatterns = [
+       path('', views.index),
+   ]
+   ```
+
+   * `home/views.py` 파일에서 `index`를 호출하는 url 은 `http://<host>/`이 아니라, `http://<host>/home/`이다.
+
+# Template 폴더 설정
+
+### 디렉토리 구조
+
+디렉토리 구조는 `home/templates/home/`으로 구성된다.
+
+이 디렉토리 설정은 `settings.py`의 `TEMPLATES`에 다음과 같이 되어 있다.
+
+```python
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'django_intro', 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+```
+
+* `DIRS` : templates를 커스텀하여 경로를 설정할 수 있다.
+
+  * 경로 설정
+
+    ```python
+    os.path.join(BASE_DIR, 'django_intro', 'templates')
+    #=> PROJECT1/django_intro/templates/
+    ```
+
+* `APP_DIRS` : `INSTALLED_APPS`에 설정된 app의 디렉토리에 있는 `templates`를 템플릿으로 활용한다. (TRUE)
+
+1. 활용 예시
+
+   ```python
+   # home/views.py
+   def index(request):
+       return render(request, 'home/index.html')
+   ```
+
+   ```
+   home
+   ├── __init__.py
+   ├── admin.py
+   ├── apps.py
+   ├── migrations
+   ├── models.py
+   ├── templates
+   |   └── home
+   │       └── index.html
+   ├── tests.py
+   ├── urls.py
+   └── views.py
+   ```
+
+
+
+
+
+
+
+
+
+
+bash
+
+```bash
+(django-venv) ridkdkdkr:~/workspace $ django-admin startproject first_workshop2
+(django-venv) ridkdkdkr:~/workspace $ cd first_workshop2/
+(django-venv) ridkdkdkr:~/workspace/first_workshop2 $ ls
+first_workshop2/  manage.py*
+(django-venv) ridkdkdkr:~/workspace/first_workshop2 $ python manage.py startapp home
+```
+
+settings.py
+
+```python
+ALLOWED_HOSTS = ['*']
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'home',
+]
+
+LANGUAGE_CODE = 'ko-kr'
+
+TIME_ZONE = 'Asia/Seoul'
+```
+
+urls.py
+
+```python
+from django.contrib import admin
+from django.urls import path
+from home import views
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('info/', views.info),
+]
+```
+
+views.py
+
+```python
+from django.shortcuts import render
+
+classroom = {'박길동': 28, '홍길동': 29, '김길동': 27}
+# Create your views here.
+def info(request):
+    teacher = '이길동'
+    return render(request, 'info.html', {'classroom': classroom, 'teacher': teacher})
+```
+
+/home/templates/info.html
+
+```html
+<h1>우리반 정보</h1>
+<h2>Teacher</h2>
+<ul>
+    <li>{{ teacher }}</li>
+</ul>
+<h2>Students</h2>
+<ul>
+    {% for name, value in classroom.items %}
+        <li>{{ name }}</li>
+    {% endfor %}
+</ul>
+```
+
+bash
+
+```bash
+(django-venv) ridkdkdkr:~/workspace/first_workshop2 $ python manage.py runserver 0.0.0.0:8080
+```
+
+urls.py
+
+```python
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('info/', views.info),
+    path('student/<name>', views.student),
+]
+```
+
+views.py
+
+```python
+def student(request, name):
+    age = classroom.get(name,' unknown')
+    return render(request, 'student.html', {'age': age, 'name': name})
+```
+
+/home/templates/student.html
+
+```html
+{% if age == 'unknown' %}
+    <h1>등록되지 않은 학생입니다.</h1>
+{% else %}
+    <h1>이름 : {{ name }}</h1>
+    <h2>나이 : {{ age }}</h2>
+{% endif %}
+```
+
+
+
+
+
+Built-int template tags and filters
+
+https://docs.djangoproject.com/en/1.7/ref/templates/builtins/#date
