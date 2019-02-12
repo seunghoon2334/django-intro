@@ -1,0 +1,61 @@
+<p>1. 반복문</p>
+{% for menu in my_list %}
+    {{ forloop.counter }}
+    {% if forloop.first %}
+        <p>짜자자자자자자자장면+고추가루</p>
+    {% else %}
+        <p>{{ menu }}</p>
+    {% endif %}
+{% endfor %}
+{% for user in empty_list %}
+    <p>{{ user }}</p>
+    {% empty %}
+        <p>지금 가입된 유저가 없습니다.</p>
+{% endfor %}
+<hr>
+<p>2. 조건문</p>
+{% if '김치볶음밥' in my_list %}
+    <p>김치볶음밥에 계란 추가요!~</p>
+{% endif %}
+<hr>
+<p>3. length filter 활용</p>
+{% for message in messages %}
+    {% if message|length > 5 %}
+        <p>글씨가 너무 길어요</p>
+    {% else %}
+        <p>{{ message }}, {{message|length}}</p>
+    {% endif %}
+{% endfor %}
+<hr>
+<p>4. lorem ipsum : % 주의하자!</p>
+{% lorem %}
+<hr>
+{% lorem 3 w %}
+<hr>
+{% lorem 4 w random %}
+<hr>
+{% lorem 4 p %}
+<hr>
+<p>5. 글자수 제한하기(truncate)</p>
+<p>{{ my_sentence|truncatewords:3 }}</p>
+<p>{{ my_sentence|truncatechars:10 }}</p> <!-- ' '... -->
+<hr>
+<p>6. 글자 관련 필터</p>
+<p>{{ 'abc'|length }}</p>
+<p>{{ 'ABC'|lower }}</p>
+<p>{{ my_sentence|title }}</p>
+<p>{{ 'abc def. hi'|capfirst }}</p>
+<p>{{ my_list|random }}</p>
+<hr>
+<p>7. 연산 - django-mathfilters 쓰면 추가적으로도 가능하긴함.</p>
+<p>{{ 4|add:6 }}</p>
+<hr>
+<p>8. 날짜표현</p>
+{{ now }}<br>
+{% now "SHORT_DATETIME_FORMAT" %}<br>
+{% now "DATETIME_FORMAT" %}<br>
+{% now "SHORT_DATE_FORMAT" %}<br>
+{% now "TIME_FORMAT" %}<br>
+{% now "Y년 m월 d일 (D) h:i" %}<br>
+
+{{ 'http://google.com'|urlize }}
